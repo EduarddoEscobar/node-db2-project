@@ -18,6 +18,7 @@ router.get('/:id', [middleware.checkCarId], async (req, res) => {
 })
 
 router.post('/', [middleware.checkCarPayload, middleware.checkVinNumberValid, middleware.checkVinNumberUnique], async (req, res) => {
+    console.log("posting");
     try{
         let car = await Cars.create(req.body);
         res.status(201).json(car);

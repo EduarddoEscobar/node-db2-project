@@ -18,7 +18,7 @@ const checkCarPayload = (req, res, next) => {
   if(vin && make && model && mileage){
     next();
   }else{
-    let emptyFields = [(vin ? 'vin' : ''), (make ? 'make' : ''), (model ? 'model' : ''), (mileage ? 'mileage' : '')];
+    let emptyFields = [(!vin ? 'vin' : ''), (!make ? 'make' : ''), (!model ? 'model' : ''), (!mileage ? 'mileage' : '')];
     emptyFields = emptyFields.filter(f => f.length > 0);
     next({status: 400, message: `${emptyFields.join(', ')} is missing`});
   }
@@ -30,13 +30,23 @@ const checkVinNumberValid = (req, res, next) => {
   if(isValidVin){
     next();
   }else{
-    res.status(400).json({message: `vin ${req.body.vin} is invalid`});
+    next({status: 400, message: `vin ${req.body.vin} is invalid`});
   }
 }
 
 const checkVinNumberUnique = async (req, res, next) => {
   // DO YOUR MAGIC
-  let car = await 
+  try{
+    let car = await Cars.getByVin(req.body.vin);
+    if(car){
+      next({status: 400, message: `vin ${req.body.vin} already exists`});
+    }else{
+      next();
+    }
+  }catch(e){
+    next(e);
+  }
+  
 }
 
 module.exports = {

@@ -8,7 +8,7 @@ const checkCarId = async (req, res, next) => {
     req.car = car;
     next();
   }else{
-    res.status(404).json({message: `car with id ${req.params.id} is not found`});
+    next({status: 404, message: `car with id ${req.params.id} is not found`});
   }
 }
 
@@ -20,7 +20,7 @@ const checkCarPayload = (req, res, next) => {
   }else{
     let emptyFields = [(vin ? 'vin' : ''), (make ? 'make' : ''), (model ? 'model' : ''), (mileage ? 'mileage' : '')];
     emptyFields = emptyFields.filter(f => f.length > 0);
-    res.status(400).json({message: `${emptyFields.join(', ')} is missing`});
+    next({status: 400, message: `${emptyFields.join(', ')} is missing`});
   }
 }
 
@@ -36,12 +36,7 @@ const checkVinNumberValid = (req, res, next) => {
 
 const checkVinNumberUnique = async (req, res, next) => {
   // DO YOUR MAGIC
-  let vins = await Cars.getAll().map(car => car.vin);
-  if(vins.includes(req.body.vin)){
-    res.status(400).json({message: `vin ${req.body.vin} already exists`});
-  }else{
-    next();
-  }
+  let car = await 
 }
 
 module.exports = {
